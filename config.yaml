@@ -3,10 +3,14 @@ simulation_env: "workspaceA"
 rviz2: true
 human_1: "test2.action"
 lidar_1:
- x: 10
- y: 10
- z: 10
+ x: -2
+ y: 0
+ z: 1.2
  channels: 32
+ rate: 5
+lidar_2:
+ x: 2
+ y: 0
+ z: 1.2
+ channels: 64
  rate: 10
-
-
