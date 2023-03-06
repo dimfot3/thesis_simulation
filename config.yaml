@@ -1,5 +1,5 @@
 ---
-simulation_env: "workspaceA"
+simulation_env: "bedroom"
 rviz2: true
 human_1: "test2.action"
 lidar_1:
