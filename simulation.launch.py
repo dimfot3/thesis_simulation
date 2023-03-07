@@ -46,10 +46,10 @@ def generate_launch_description():
     generate_world(args['simulation_env'], args['lidars'], args['humans'])
     # set environment paths
     os.environ['AMENT_PREFIX_PATH'] +=f':{os.getcwd()}/ros_packages/install/gazebo_to_ros2'
-
+    lidar_names = [*args['lidars'].keys()]
     # init lidar gazebo to ros2 node
     lidar_node = ExecuteProcess(
-        cmd=['ros2', 'run', 'gazebo_to_ros2', 'gazebo_to_ros2_node'],
+        cmd=['ros2', 'run', 'gazebo_to_ros2', 'gazebo_to_ros2_node', *lidar_names],
         output='screen'
     )
 

@@ -4,10 +4,8 @@
 #include <gz/msgs/pointcloud_packed.pb.h>
 #include "std_msgs/msg/string.hpp"
 #include <sensor_msgs/msg/point_cloud2.hpp>
-
-
-
-rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr lidar_publisher;
+#include <vector>
+#include <string>
 
 
 sensor_msgs::msg::PointCloud2 convertPointCloudPackedToPointCloud2(const gz::msgs::PointCloudPacked& msg)
@@ -47,28 +45,37 @@ sensor_msgs::msg::PointCloud2 convertPointCloudPackedToPointCloud2(const gz::msg
     return pc2;
 }
 
-void lidar_cb(const gz::msgs::PointCloudPacked &msg)
+void lidar_cb(const gz::msgs::PointCloudPacked &msg, rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr lidar_publisher)
 {
     sensor_msgs::msg::PointCloud2 pcl2_msg = convertPointCloudPackedToPointCloud2(msg);
     lidar_publisher->publish(pcl2_msg);
 }
 
-
+std::vector<std::string> get_lidar_topics(int argc, char **argv)
+{
+    std::vector<std::string> lidar_list;
+    for(int i = 1; i < argc; i++)
+    {
+        lidar_list.push_back(argv[i]);
+    }
+    return lidar_list;
+}
 
 int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
     auto node = rclcpp::Node::make_shared("publisher_node");
-    lidar_publisher = node->create_publisher<sensor_msgs::msg::PointCloud2>("lidar", 10);
-
+    std::vector<std::string> lidar_topics = get_lidar_topics(argc, argv);
+    std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> lidar_publisher;
     gz::transport::Node nodegz;
-    std::string topic_sub = "/lidar1/points";   // subscribe to this topic
-    if (!nodegz.Subscribe(topic_sub, lidar_cb))
+    for(int i = 0; i < lidar_topics.size(); i++)
     {
-      std::cerr << "Error subscribing to topic [" << topic_sub << "]" << std::endl;
-      return -1;
+        lidar_publisher.push_back(node->create_publisher<sensor_msgs::msg::PointCloud2>(lidar_topics[i], 10));
+        std::string topic_sub = "/points";
+        topic_sub = lidar_topics[i] + topic_sub;
+        std::function<void(const gz::msgs::PointCloudPacked &)> bound_lidar_callback = std::bind(lidar_cb, std::placeholders::_1, lidar_publisher[i]);
+        nodegz.Subscribe(topic_sub, bound_lidar_callback);
     }
-
     rclcpp::spin(node);
     return 0;
 }
