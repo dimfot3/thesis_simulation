@@ -47,9 +47,20 @@ def generate_launch_description():
     # set environment paths
     os.environ['AMENT_PREFIX_PATH'] +=f':{os.getcwd()}/ros_packages/install/gazebo_to_ros2'
     lidar_names = [*args['lidars'].keys()]
+    lidar_args = ''
+    for lidar in args['lidars'].keys():
+        lidar_args += f' {lidar} {args["lidars"][lidar]["x"]} {args["lidars"][lidar]["y"]} {args["lidars"][lidar]["z"]} ' + \
+        f'{args["lidars"][lidar]["rx"]} {args["lidars"][lidar]["ry"]} {args["lidars"][lidar]["rz"]}'
+    print(lidar_args)
+    # # init lidar tf static publisher
+    # lidar_node = ExecuteProcess(
+    #     cmd=['ros2', 'run', 'gazebo_to_ros2', 'lidar_tf_publisher', lidar_args],
+    #     output='screen'
+    # )
+
     # init lidar gazebo to ros2 node
     lidar_node = ExecuteProcess(
-        cmd=['ros2', 'run', 'gazebo_to_ros2', 'gazebo_to_ros2_node', *lidar_names],
+        cmd=['ros2', 'run', 'gazebo_to_ros2', 'lidar_republisher', *lidar_names],
         output='screen'
     )
 
@@ -70,4 +81,4 @@ def generate_launch_description():
     if rviz2_arg: ld.add_action(rviz2_node)
     return ld
 
-generate_launch_description()
+#generate_launch_description()
