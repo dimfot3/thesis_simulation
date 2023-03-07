@@ -6,11 +6,17 @@ lidar_1:
  x: -2
  y: 0
  z: 1.2
+ rx: 0
+ ry: 0
+ rz: 0
  channels: 32
  rate: 5
 lidar_2:
  x: 2
  y: 0
  z: 1.2
+ rx: 0
+ ry: 0
+ rz: 0
  channels: 64
  rate: 10

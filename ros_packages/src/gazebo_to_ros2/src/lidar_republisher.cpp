@@ -8,12 +8,12 @@
 #include <string>
 
 
-sensor_msgs::msg::PointCloud2 convertPointCloudPackedToPointCloud2(const gz::msgs::PointCloudPacked& msg)
+sensor_msgs::msg::PointCloud2 convertPointCloudPackedToPointCloud2(const gz::msgs::PointCloudPacked& msg, std::string lidar_name)
 {
     sensor_msgs::msg::PointCloud2 pc2;
     rclcpp::Time now = rclcpp::Clock().now();
     pc2.header.stamp = now;
-    pc2.header.frame_id = "lidar_frame";
+    pc2.header.frame_id = lidar_name;
 
     pc2.height = 1;
     pc2.width = msg.data().size() / msg.point_step();
@@ -45,9 +45,9 @@ sensor_msgs::msg::PointCloud2 convertPointCloudPackedToPointCloud2(const gz::msg
     return pc2;
 }
 
-void lidar_cb(const gz::msgs::PointCloudPacked &msg, rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr lidar_publisher)
+void lidar_cb(const gz::msgs::PointCloudPacked &msg, rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr lidar_publisher, std::string lidar_name)
 {
-    sensor_msgs::msg::PointCloud2 pcl2_msg = convertPointCloudPackedToPointCloud2(msg);
+    sensor_msgs::msg::PointCloud2 pcl2_msg = convertPointCloudPackedToPointCloud2(msg, lidar_name);
     lidar_publisher->publish(pcl2_msg);
 }
 
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
         lidar_publisher.push_back(node->create_publisher<sensor_msgs::msg::PointCloud2>(lidar_topics[i], 10));
         std::string topic_sub = "/points";
         topic_sub = lidar_topics[i] + topic_sub;
-        std::function<void(const gz::msgs::PointCloudPacked &)> bound_lidar_callback = std::bind(lidar_cb, std::placeholders::_1, lidar_publisher[i]);
+        std::function<void(const gz::msgs::PointCloudPacked &)> bound_lidar_callback = std::bind(lidar_cb, std::placeholders::_1, lidar_publisher[i], lidar_topics[i]);
         nodegz.Subscribe(topic_sub, bound_lidar_callback);
     }
     rclcpp::spin(node);

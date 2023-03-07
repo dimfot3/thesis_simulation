@@ -44,8 +44,15 @@ int main(int argc, char **argv)
     std::vector<std::vector<float>> pos;
     std::vector<std::vector<float>> rot;
     parse_args(argc, argv, lidar_names, pos, rot);
+    std::vector<float> pos_world = {0, 0, 0};
+    std::vector<float> rot_world = {0, 0, 0};
+    // geometry_msgs::msg::TransformStamped static_transform;
+    // std::string world_frame = "world";
+    // generate_lidar_tf(node, static_transform, world_frame, pos_world, rot_world);
+    // static_broadcaster.sendTransform(static_transform);
     for(int i = 0; i < num_of_lidar; i++)
     {
+        std::cout<<num_of_lidar<<std::endl;
         geometry_msgs::msg::TransformStamped static_transform;
         transforms.push_back(static_transform);
         generate_lidar_tf(node, transforms[i], lidar_names[i], pos[i], rot[i]);

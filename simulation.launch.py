@@ -3,6 +3,7 @@ from launch.actions import DeclareLaunchArgument, ExecuteProcess
 from launch.substitutions import LaunchConfiguration
 import os
 import yaml
+import numpy as np
 import subprocess
 
 def parse_arguments():
@@ -47,16 +48,16 @@ def generate_launch_description():
     # set environment paths
     os.environ['AMENT_PREFIX_PATH'] +=f':{os.getcwd()}/ros_packages/install/gazebo_to_ros2'
     lidar_names = [*args['lidars'].keys()]
-    lidar_args = ''
+    lidar_args = np.array([])
     for lidar in args['lidars'].keys():
-        lidar_args += f' {lidar} {args["lidars"][lidar]["x"]} {args["lidars"][lidar]["y"]} {args["lidars"][lidar]["z"]} ' + \
-        f'{args["lidars"][lidar]["rx"]} {args["lidars"][lidar]["ry"]} {args["lidars"][lidar]["rz"]}'
+        lidar_args = np.append(lidar_args, (f'{lidar} {args["lidars"][lidar]["x"]} {args["lidars"][lidar]["y"]} {args["lidars"][lidar]["z"]} ' + \
+        f'{args["lidars"][lidar]["rx"]} {args["lidars"][lidar]["ry"]} {args["lidars"][lidar]["rz"]}').split(" "))
     print(lidar_args)
-    # # init lidar tf static publisher
-    # lidar_node = ExecuteProcess(
-    #     cmd=['ros2', 'run', 'gazebo_to_ros2', 'lidar_tf_publisher', lidar_args],
-    #     output='screen'
-    # )
+    # init lidar tf static publisher
+    lidar_tf_node = ExecuteProcess(
+        cmd=['ros2', 'run', 'gazebo_to_ros2', 'lidar_tf_publisher', *lidar_args],
+        output='screen'
+    )
 
     # init lidar gazebo to ros2 node
     lidar_node = ExecuteProcess(
@@ -77,6 +78,7 @@ def generate_launch_description():
     # create and return launcher
     ld = LaunchDescription()
     ld.add_action(lidar_node)
+    ld.add_action(lidar_tf_node)
     ld.add_action(gazebo_node)
     if rviz2_arg: ld.add_action(rviz2_node)
     return ld
