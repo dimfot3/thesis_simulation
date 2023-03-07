@@ -64,7 +64,7 @@ std::vector<std::string> get_lidar_topics(int argc, char **argv)
 int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
-    auto node = rclcpp::Node::make_shared("publisher_node");
+    auto node = rclcpp::Node::make_shared("lidar_publisher_node");
     std::vector<std::string> lidar_topics = get_lidar_topics(argc, argv);
     std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> lidar_publisher;
     gz::transport::Node nodegz;
