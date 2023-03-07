@@ -52,7 +52,6 @@ int main(int argc, char **argv)
     // static_broadcaster.sendTransform(static_transform);
     for(int i = 0; i < num_of_lidar; i++)
     {
-        std::cout<<num_of_lidar<<std::endl;
         geometry_msgs::msg::TransformStamped static_transform;
         transforms.push_back(static_transform);
         generate_lidar_tf(node, transforms[i], lidar_names[i], pos[i], rot[i]);
