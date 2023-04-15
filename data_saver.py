@@ -49,18 +49,18 @@ class PointCloudSubscriber(Node):
             out_pcl = np.zeros((pcl.shape[0],4))
             out_pcl[:, :3] = pcl
             out_pcl = out_pcl.astype('float32')
-            out_pcl.tofile('bedroom.bin')
+            out_pcl.tofile('bedroom32.bin')
             self.saved = True
         rclpy.shutdown()
 
 def main(args=None):
-    # rclpy.init(args=args)
-    # point_cloud_subscriber = PointCloudSubscriber()
-    # rclpy.spin(point_cloud_subscriber)
-    pcl = np.fromfile('./bedroom.bin', dtype='float32').reshape(-1, 4)[:, :3]
-    ax = plt.subplot(1, 1, 1, projection='3d')
-    ax.scatter(pcl[:, 0], pcl[:, 1], pcl[:, 2])
-    plt.show()
+    rclpy.init(args=args)
+    point_cloud_subscriber = PointCloudSubscriber()
+    rclpy.spin(point_cloud_subscriber)
+    # pcl = np.fromfile('./bedroom.bin', dtype='float32').reshape(-1, 4)[:, :3]
+    # ax = plt.subplot(1, 1, 1, projection='3d')
+    # ax.scatter(pcl[:, 0], pcl[:, 1], pcl[:, 2])
+    # plt.show()
 
 if __name__ == '__main__':
     main()

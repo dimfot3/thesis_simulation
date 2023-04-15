@@ -9,7 +9,7 @@
 #include <gz/sim/components/Actor.hh>
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
-
+#include "tf2_ros/transform_broadcaster.h"
 
 namespace command_actor
 {
@@ -35,8 +35,8 @@ namespace command_actor
     public: void PreUpdate(const gz::sim::UpdateInfo &_info,
                 gz::sim::EntityComponentManager &_ecm) override;
     private: std::shared_ptr<rclcpp::Node> node;
-    private: std::shared_ptr<rclcpp::Publisher<geometry_msgs::msg::PoseStamped>> publisher;
-    private: void publish_message(Pose &pose);
+    private: std::shared_ptr<tf2_ros::TransformBroadcaster> broadcaster;
+    private: void publish_actor_frame(Pose &pose);
 
     private: gz::sim::Entity entity;  // the actor's entity
     std::vector<Pose> poses;        // saved the trajectroy poses
@@ -45,6 +45,7 @@ namespace command_actor
     private: double last_update;    // used to get time between updates
     flann::Index<flann::L2<float>> *ktree; // time kdtree for fast search
     float velocity, angular_velocity;
+    std::string actor_name;
   };
 }
 

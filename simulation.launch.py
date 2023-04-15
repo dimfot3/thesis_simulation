@@ -30,11 +30,15 @@ def generate_lidars(lidars):
                           f"> ./gp_models/lidar/lidar_{i + 1}.sdf"]), shell=True) 
 
 def generate_humans(humans):
-    pass
+    print(humans)
+    for human in humans.keys():
+        subprocess.call(" ".join(["xacro", f"./human_models/actor_model.xacro", 
+                        f"traj_path:={humans[human]['traj']}", f"velocity:={humans[human]['velocity']}",
+                          f"> ./human_models/{human}.sdf"]), shell=True) 
 
 def generate_world(world_name, lidars, humans):
     subprocess.call(" ".join(["xacro", f"./indoor_spaces/{world_name}/{world_name}.xacro", 
-                        f"lidar_n:={len(list(lidars.keys()))}",
+                        f"lidar_n:={len(list(lidars.keys()))}", f"human_n:={len(list(humans.keys()))}"
                           f"> ./indoor_spaces/{world_name}/{world_name}.sdf"]), shell=True) 
 
 def generate_launch_description():
@@ -47,6 +51,7 @@ def generate_launch_description():
     generate_world(args['simulation_env'], args['lidars'], args['humans'])
     # set environment paths
     os.environ['AMENT_PREFIX_PATH'] +=f':{os.getcwd()}/ros_packages/install/gazebo_to_ros2'
+    os.environ['GZ_SIM_SYSTEM_PLUGIN_PATH'] =f':{os.getcwd()}/ros_packages/build/gazebo_to_ros2'
     lidar_names = [*args['lidars'].keys()]
     lidar_args = np.array([])
     for lidar in args['lidars'].keys():
@@ -67,7 +72,7 @@ def generate_launch_description():
 
     # init simulation node
     gazebo_node = ExecuteProcess(
-    cmd=['gz', 'sim', f'indoor_spaces/{simulation_env_arg}/{simulation_env_arg}.sdf'],
+    cmd=['gz', 'sim', '-v3',f'indoor_spaces/{simulation_env_arg}/{simulation_env_arg}.sdf'],
     output='screen')
 
     # init rviz2 monitor
@@ -83,4 +88,4 @@ def generate_launch_description():
     if rviz2_arg: ld.add_action(rviz2_node)
     return ld
 
-#generate_launch_description()
+

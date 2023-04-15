@@ -57,6 +57,7 @@ class HumanMotionCreator:
         # Generate a set of new timestamps with a finer time resolution
         num_interp_points = self.num_interp
         new_timestamps = np.linspace(timestamps[0], timestamps[-1], num_interp_points)
+        print(new_timestamps)
         # Interpolate the x and y values at the new timestamps
         interp_x = spline_x(new_timestamps)
         interp_y = spline_y(new_timestamps)
@@ -91,8 +92,16 @@ class HumanMotionCreator:
         # Show the animation
         plt.show()
 
+    def save_timestamped_posed(self, motion_mat):
+        motion_mat.astype('float32').tofile('test_motion.bin')
+
+
 
 if __name__ == '__main__':
-    hm_cr = HumanMotionCreator([-10, 10], [-10, 10], 5, 2000, 2.2, 0.2)
-    motion = hm_cr.find_motion()
-    hm_cr.plot_motion(motion)
+    # hm_cr = HumanMotionCreator([-3.5, 3], [-1.8, 1.8], 10, 5000, 2.2, 0.2)
+    # motion = hm_cr.find_motion()
+    # # hm_cr.plot_motion(motion)
+    # hm_cr.save_timestamped_posed(motion)
+    # print(motion)
+    motion = np.fromfile('../test_motion.bin', dtype='float32').reshape(-1, 4)
+    print(motion)

@@ -8,6 +8,13 @@
 #include <flann/flann.hpp>
 #include <gz/sim/Util.hh>
 #include <tf2/LinearMath/Quaternion.h>
+#include "tf2_ros/transform_broadcaster.h"
+#include <geometry_msgs/msg/transform_stamped.hpp>
+#include <random>
+
+// Initialize random number generator with a seed (e.g. current time)
+std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
+
 using namespace gz;
 using namespace sim;
 using namespace systems;
@@ -23,27 +30,30 @@ using namespace command_actor;
 
 CommandActor::CommandActor()
 {
+	
 }
 
 CommandActor::~CommandActor()
 {
 }
 
-void CommandActor::publish_message(Pose &pose)
+void CommandActor::publish_actor_frame(Pose &pose)
 {
-	tf2::Quaternion quat;
-    quat.setRPY(0, 0, pose.rz); // Set rotation in Roll-Pitch-Yaw
-	auto message = geometry_msgs::msg::PoseStamped();
-	message.header.stamp = this->node->now();
-	message.header.frame_id = "world";
-	message.pose.position.x = pose.x;
-	message.pose.position.y = pose.y;
-	message.pose.position.z = 1.0;
-	message.pose.orientation.x = quat.x();
-	message.pose.orientation.y = quat.y();
-	message.pose.orientation.z = quat.z();
-	message.pose.orientation.w = quat.w();
-	this->publisher->publish(message);
+    
+    // Set the transform values
+    geometry_msgs::msg::TransformStamped transformStamped;
+    transformStamped.header.frame_id = "world";
+    transformStamped.child_frame_id = this->actor_name;
+    transformStamped.transform.translation.x = pose.x;
+    transformStamped.transform.translation.y = pose.y;
+    transformStamped.transform.translation.z = 1.0;
+    tf2::Quaternion q;
+    q.setRPY(0, 0, pose.rz); // roll, pitch, yaw
+    transformStamped.transform.rotation.x = q.x();
+    transformStamped.transform.rotation.y = q.y();
+    transformStamped.transform.rotation.z = q.z();
+    transformStamped.transform.rotation.w = q.w();
+	broadcaster->sendTransform(transformStamped);
 }
 
 void CommandActor::Configure(const gz::sim::Entity &_entity,
@@ -53,6 +63,7 @@ void CommandActor::Configure(const gz::sim::Entity &_entity,
 {
 	// Load trajectory path
 	this->entity = _entity;
+	auto actorComp = _ecm.Component<gz::sim::components::Actor>(_entity);
 	gzmsg << "Command actor for entity [" << _entity << "]" << std::endl;
 	// enableComponent<gz::sim::components::WorldPose>(_ecm, this->entity, true);
 	auto sdfClone = _sdf->Clone();
@@ -69,15 +80,49 @@ void CommandActor::Configure(const gz::sim::Entity &_entity,
 	flann::Matrix<float> dataset(time_arr.data(), time_arr.size(), 1);
 	ktree = new flann::Index<flann::L2<float>>(dataset, flann::KDTreeIndexParams(4));
 	ktree->buildIndex();
+	
+	std::string animationName;
 
+	// If animation not provided, use first one from SDF
+	if (!_sdf->HasElement("animation"))
+	{
+		if (actorComp->Data().AnimationCount() < 1)
+		{
+		gzerr << "Actor SDF doesn't have any animations." << std::endl;
+		return;
+		}
+
+		animationName = actorComp->Data().AnimationByIndex(0)->Name();
+	}
+	else
+	{
+		animationName = _sdf->Get<std::string>("animation");
+	}
+
+	if (animationName.empty())
+	{
+		gzerr << "Can't find actor's animation name." << std::endl;
+		return;
+	}
+	auto animationNameComp = _ecm.Component<components::AnimationName>(_entity);
+	if (nullptr == animationNameComp)
+	{
+		_ecm.CreateComponent(_entity, components::AnimationName(animationName));
+	}
+	else
+	{
+		*animationNameComp = components::AnimationName(animationName);
+	}
+	// Mark as a one-time-change so that the change is propagated to the GUI
+	_ecm.SetChanged(_entity,
+		components::AnimationName::typeId, ComponentState::OneTimeChange);
+	
 	// set up custom animation time from this plugin
-	auto actorComp = _ecm.Component<gz::sim::components::Actor>(_entity);
 	auto animTimeComp = _ecm.Component<gz::sim::components::AnimationTime>(_entity);
 	if (nullptr == animTimeComp)
 	{
 		_ecm.CreateComponent(_entity, gz::sim::components::AnimationTime());
 	}
-
 	// Initialize the pose and override SDF trajectory path
 	math::Pose3d initialPose;
 	auto poseComp = _ecm.Component<gz::sim::components::Pose>(_entity);
@@ -104,9 +149,11 @@ void CommandActor::Configure(const gz::sim::Entity &_entity,
 	started_sec = 0;
 	last_update = 0;
 	// initilize ROS2
-	rclcpp::init(0, 0);
-	node = std::make_shared<rclcpp::Node>("pose_publisher");
-	publisher = node->create_publisher<geometry_msgs::msg::PoseStamped>("humans_poses", 10);
+	if(!rclcpp::ok())
+		rclcpp::init(0, 0);
+	node = std::make_shared<rclcpp::Node>("pose_publisher_" + actorComp->Data().Name());
+	this->actor_name = actorComp->Data().Name();
+	broadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(node);
 }
 
 
@@ -148,6 +195,7 @@ void CommandActor::PreUpdate(const gz::sim::UpdateInfo &_info,
 	double distanceTraveled = (actorPose.Pos() - initialPose.Pos()).Length();
 	// Update actor root pose
 	*trajPoseComp = components::TrajectoryPose(actorPose);
+	// trajPoseComp->set_tension(0.2);
 	// Mark as a one-time-change so that the change is propagated to the GUI
 	_ecm.SetChanged(this->entity,
 		components::TrajectoryPose::typeId, ComponentState::OneTimeChange);
@@ -156,13 +204,12 @@ void CommandActor::PreUpdate(const gz::sim::UpdateInfo &_info,
 		this->entity);
 	auto animTime = animTimeComp->Data() +
 	std::chrono::duration_cast<std::chrono::steady_clock::duration>(
-	std::chrono::duration<double>(distanceTraveled /
-	this->velocity));
+	std::chrono::duration<double>(dur * 2 * this->velocity));
 	*animTimeComp = components::AnimationTime(animTime);
 	// Mark as a one-time-change so that the change is propagated to the GUI
 	_ecm.SetChanged(this->entity,
 		components::AnimationTime::typeId, ComponentState::OneTimeChange);
 	// publish new pose to ROS2 topic
-	command_actor::Pose msgPose{(float)sec, (float)actorPose.Pos().X(), (float)actorPose.Pos().Y(), (float)actorPose.Rot().Z()};
-	this->publish_message(msgPose);
+	command_actor::Pose msgPose{(float)sec, (float)actorPose.Pos().X(), (float)actorPose.Pos().Y(), (float)(actorPose.Rot().Z() + initialPose.Rot().Z())};
+	this->publish_actor_frame(msgPose);
 }
