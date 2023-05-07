@@ -1,14 +1,12 @@
 ---
 simulation_env: "bedroom"
 rviz2: true
+static_lidar: true
 human_1: 
- velocity: 2
+ velocity: 0.5
  traj: "test_motion.bin"
 human_2: 
- velocity: 1
- traj: "test_motion.bin"
-human_3: 
- velocity: 3
+ velocity: 1.5
  traj: "test_motion.bin"
 lidar_1:
  x: 3

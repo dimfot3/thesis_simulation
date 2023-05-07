@@ -12,6 +12,12 @@
 	<model name="lidar_module">
 		<static>true</static>
 		<pose>$(arg x) $(arg y) $(arg z) $(arg rx) $(arg ry) $(arg rz)</pose>
+		<plugin filename="LidarPlugin"
+		      name="lidar_plugin::LidarPlugin">
+		      <info>
+		      		<name>$(arg name)</name>
+		      </info>
+	  	</plugin>
 		<link name="$(arg name)">
 			<sensor name='gpu_lidar' type='gpu_lidar'>
 				<topic>$(arg name)</topic>

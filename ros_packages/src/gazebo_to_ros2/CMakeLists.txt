@@ -24,6 +24,11 @@ ament_target_dependencies(CommandActor rclcpp geometry_msgs std_msgs tf2_ros tf2
 set_property(TARGET CommandActor PROPERTY CXX_STANDARD 17)
 target_link_libraries(CommandActor gz-plugin${GZ_PLUGIN_VER}::gz-plugin${GZ_PLUGIN_VER} gz-sim7::gz-sim7 gz-physics${GZ_PHYSICS_VER}::gz-physics${GZ_PHYSICS_VER})
 
+# lidar plugin
+add_library(LidarPlugin SHARED src/LidarPlugin.cpp)
+ament_target_dependencies(LidarPlugin rclcpp geometry_msgs std_msgs tf2_ros tf2_msgs)
+set_property(TARGET LidarPlugin PROPERTY CXX_STANDARD 17)
+target_link_libraries(LidarPlugin gz-plugin${GZ_PLUGIN_VER}::gz-plugin${GZ_PLUGIN_VER} gz-sim7::gz-sim7 gz-physics${GZ_PHYSICS_VER}::gz-physics${GZ_PHYSICS_VER})
 
 # lidar republisher
 add_executable(lidar_republisher src/lidar_republisher.cpp)
