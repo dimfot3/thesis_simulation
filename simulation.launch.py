@@ -39,6 +39,7 @@ def generate_humans(humans):
                           f"> ./human_models/{human}.sdf"]), shell=True) 
 
 def generate_world(world_name, lidars, humans):
+    print(lidars)
     subprocess.call(" ".join(["xacro", f"./indoor_spaces/{world_name}/{world_name}.xacro", 
                         f"lidar_n:={len(list(lidars.keys()))}", f"human_n:={len(list(humans.keys()))}"
                           f"> ./indoor_spaces/{world_name}/{world_name}.sdf"]), shell=True) 
@@ -82,7 +83,7 @@ def generate_launch_description():
     cmd=['rviz2'],
     output='screen')
 
-    # init rviz2 monitor
+    # init lidar positioning
     ld_pos_node = ExecuteProcess(
     cmd=['python3', 'lidar_positioning.py'],
     output='screen')
