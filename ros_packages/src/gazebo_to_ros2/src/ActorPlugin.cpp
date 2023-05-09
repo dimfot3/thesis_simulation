@@ -42,6 +42,7 @@ void CommandActor::publish_actor_frame(Pose &pose)
     
     // Set the transform values
     geometry_msgs::msg::TransformStamped transformStamped;
+	transformStamped.header.stamp = rclcpp::Clock().now();
     transformStamped.header.frame_id = "world";
     transformStamped.child_frame_id = this->actor_name;
     transformStamped.transform.translation.x = pose.x;

@@ -92,16 +92,17 @@ class HumanMotionCreator:
         # Show the animation
         plt.show()
 
-    def save_timestamped_posed(self, motion_mat):
-        motion_mat.astype('float32').tofile('test_motion.bin')
+    def save_timestamped_posed(self, motion_mat, name):
+        motion_mat.astype('float32').tofile(name)
 
 
 
 if __name__ == '__main__':
-    # hm_cr = HumanMotionCreator([-3.5, 3], [-1.8, 1.8], 10, 5000, 2.2, 0.2)
-    # motion = hm_cr.find_motion()
-    # # hm_cr.plot_motion(motion)
-    # hm_cr.save_timestamped_posed(motion)
+    hm_cr = HumanMotionCreator([-8.3, 5.9], [-2, 0.6], 4, 5000, 1.2, 0.2)
+    motion = hm_cr.find_motion()
+    hm_cr.plot_motion(motion)
+    file = 'human_models/H4A1.bin'
+    hm_cr.save_timestamped_posed(motion, file)
     # print(motion)
-    motion = np.fromfile('../test_motion.bin', dtype='float32').reshape(-1, 4)
+    # motion = np.fromfile('../test_motion.bin', dtype='float32').reshape(-1, 4)
     print(motion)

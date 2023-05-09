@@ -26,7 +26,7 @@ class TF_publisher: public rclcpp::Node
             generate_lidar_tf(static_transforms.back(), i);
         }
         timer_ = this->create_wall_timer(
-        100ms, std::bind(&TF_publisher::publish_tf, this));
+        10ms, std::bind(&TF_publisher::publish_tf, this));
     }
 
     private:
