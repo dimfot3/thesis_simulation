@@ -138,13 +138,21 @@ void CommandActor::Configure(const gz::sim::Entity &_entity,
 		auto newPose = initialPose;
 		newPose.Pos().X(0);
 		newPose.Pos().Y(0);
+		newPose.Pos().Z(1);
+		_ecm.SetChanged(this->entity,
+		components::TrajectoryPose::typeId, ComponentState::OneTimeChange);
 		*poseComp = gz::sim::components::Pose(newPose);
 	}
 	auto trajPoseComp = _ecm.Component<components::TrajectoryPose>(_entity);
 	if (nullptr == trajPoseComp)
 	{
-		initialPose.Pos().Z(1.0);
-		_ecm.CreateComponent(_entity, components::TrajectoryPose(initialPose));
+		auto newPose = initialPose;
+		newPose.Pos().X(poses[0].x);
+		newPose.Pos().Y(poses[0].y);
+		newPose.Rot() = math::Quaterniond(0, 0, poses[0].rz);
+		_ecm.CreateComponent(_entity, components::TrajectoryPose(newPose));
+		_ecm.SetChanged(this->entity,
+		components::TrajectoryPose::typeId, ComponentState::OneTimeChange);
 	}
 	// initilize trajectory time and time from last update
 	started_sec = 0;
@@ -167,16 +175,16 @@ void CommandActor::PreUpdate(const gz::sim::UpdateInfo &_info,
 	float dur = sec - this->last_update;
 	last_update = sec;
 	float query_time = sec - started_sec; 
-	
+	int k = 2;
 	// getting next pose
 	flann::Matrix<float> query_mat(&query_time, 1, 1);
-	flann::Matrix<int> indices(new int[1], 1, 1);
-	flann::Matrix<float> dists(new float[1], 1, 1);
-	ktree->knnSearch(query_mat, indices, dists, 1, flann::SearchParams(128));
-	gz::math::Pose3d next_pose(poses[indices[0][0]].x, poses[indices[0][0]].y, 0, 0, 0, poses[indices[0][0]].rz);
+	flann::Matrix<int> indices(new int[k], 1, k);
+	flann::Matrix<float> dists(new float[k], 1, k);
+	ktree->knnSearch(query_mat, indices, dists, k, flann::SearchParams(128));
+	int net_idx = poses[indices[0][0]].time >= query_time ? 0 : 1;
+	gz::math::Pose3d next_pose(poses[indices[0][net_idx]].x, poses[indices[0][net_idx]].y, 0, 0, 0, poses[indices[0][net_idx]].rz);
 	if(indices[0][0] == poses.size() - 1)
 		started_sec = sec;
-
 	// world pose
 	auto trajPoseComp = _ecm.Component<components::TrajectoryPose>(this->entity);
 	auto actorPose = trajPoseComp->Data();
@@ -188,21 +196,18 @@ void CommandActor::PreUpdate(const gz::sim::UpdateInfo &_info,
 	dir.Z(0);
 	dir.Normalize();	//unit vector to the target direction
 	// Towards target
-	math::Angle yaw = atan2(dir.Y(), dir.X());
-	yaw.Normalize();
 	actorPose.Pos() += dir * this->velocity * dur;
+	float yaw_rad = 2.0 * std::asin(targetPose.Rot().Z());
+	math::Angle yaw = yaw_rad;
+	yaw.Normalize();
 	actorPose.Rot() = math::Quaterniond(0, 0, yaw.Radian());
-	// Distance traveled is used to coordinate motion with the walking animation
-	double distanceTraveled = (actorPose.Pos() - initialPose.Pos()).Length();
 	// Update actor root pose
 	*trajPoseComp = components::TrajectoryPose(actorPose);
-	// trajPoseComp->set_tension(0.2);
 	// Mark as a one-time-change so that the change is propagated to the GUI
 	_ecm.SetChanged(this->entity,
 		components::TrajectoryPose::typeId, ComponentState::OneTimeChange);
 	// Coordinate animation with trajectory
-	auto animTimeComp = _ecm.Component<components::AnimationTime>(
-		this->entity);
+	auto animTimeComp = _ecm.Component<components::AnimationTime>(this->entity);
 	auto animTime = animTimeComp->Data() +
 	std::chrono::duration_cast<std::chrono::steady_clock::duration>(
 	std::chrono::duration<double>(dur * 2 * this->velocity));
