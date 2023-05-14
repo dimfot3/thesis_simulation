@@ -1,28 +1,18 @@
 ---
 simulation_env: "bedroom"
 rviz2: true
-static_lidar: false
+static_lidar: true
 human_1: 
- velocity: 0.5
+ velocity: 1.0
+ pace: 1.0
  traj: "test_motion.bin"
-human_2: 
- velocity: 1.5
- traj: "test_motion.bin"
+ falling_t: 2.0
 lidar_1:
- x: 3
- y: -3
- z: 0.6
+ x: 2.5
+ y: -2.5
+ z: 1.2
  rx: 0
  ry: 0
  rz: 0
- channels: 32
- rate: 20
-lidar_2:
- x: 2
- y: 0
- z: 0.7
- rx: 0
- ry: 0
- rz: 0
- channels: 16
+ channels: 64
  rate: 20

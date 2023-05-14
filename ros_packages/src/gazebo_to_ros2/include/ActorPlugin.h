@@ -44,8 +44,10 @@ namespace command_actor
     private: double started_sec;    // used for loop trajectory
     private: double last_update;    // used to get time between updates
     flann::Index<flann::L2<float>> *ktree; // time kdtree for fast search
-    float velocity, angular_velocity;
+    float velocity, angular_velocity, pace;
     std::string actor_name;
+    float falling_time;
+    bool falling_bool;
   };
 }
 

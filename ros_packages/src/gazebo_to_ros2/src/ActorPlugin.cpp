@@ -11,6 +11,8 @@
 #include "tf2_ros/transform_broadcaster.h"
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <random>
+#include <limits>
+
 
 // Initialize random number generator with a seed (e.g. current time)
 std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
@@ -69,6 +71,7 @@ void CommandActor::Configure(const gz::sim::Entity &_entity,
 	// enableComponent<gz::sim::components::WorldPose>(_ecm, this->entity, true);
 	auto sdfClone = _sdf->Clone();
 	std::string traj_path = sdfClone->GetElement("traj")->Get<std::string>("path");
+	this->pace = sdfClone->GetElement("traj")->Get<float>("pace");
 	this->velocity = sdfClone->GetElement("traj")->Get<float>("velocity");
 	std::ifstream file(traj_path, std::ios::in | std::ios::binary);
 	Pose temp_pose;
@@ -163,6 +166,8 @@ void CommandActor::Configure(const gz::sim::Entity &_entity,
 	node = std::make_shared<rclcpp::Node>("pose_publisher_" + actorComp->Data().Name());
 	this->actor_name = actorComp->Data().Name();
 	broadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(node);
+	falling_time = sdfClone->Get<float>("falling_t") > 0 ? sdfClone->Get<float>("falling_t") : std::numeric_limits<float>::max();
+	falling_bool = false;
 }
 
 
@@ -172,9 +177,18 @@ void CommandActor::PreUpdate(const gz::sim::UpdateInfo &_info,
 	// geting duration from last update and update time
 	float sec = (float) ((double) std::chrono::duration_cast<std::chrono::milliseconds>(
 		_info.simTime).count() / 1000.0);
-	float dur = sec - this->last_update;
-	last_update = sec;
-	float query_time = sec - started_sec; 
+	float dur = !falling_bool ? sec - this->last_update : std::min(sec - falling_time, (float)3.0);
+	last_update = !falling_bool ? sec : last_update;
+	float query_time = last_update - started_sec; 
+	if(sec >= falling_time & !falling_bool)
+	{
+		falling_bool = true;
+		this->velocity = 0;
+		auto animationNameComp = _ecm.Component<components::AnimationName>(this->entity);
+		*animationNameComp = components::AnimationName("falling");
+		_ecm.SetChanged(this->entity,
+		components::AnimationName::typeId, ComponentState::OneTimeChange);
+	}
 	int k = 2;
 	// getting next pose
 	flann::Matrix<float> query_mat(&query_time, 1, 1);
@@ -208,10 +222,19 @@ void CommandActor::PreUpdate(const gz::sim::UpdateInfo &_info,
 		components::TrajectoryPose::typeId, ComponentState::OneTimeChange);
 	// Coordinate animation with trajectory
 	auto animTimeComp = _ecm.Component<components::AnimationTime>(this->entity);
-	auto animTime = animTimeComp->Data() +
-	std::chrono::duration_cast<std::chrono::steady_clock::duration>(
-	std::chrono::duration<double>(dur * 2 * this->velocity));
-	*animTimeComp = components::AnimationTime(animTime);
+	if(!this->falling_bool)
+	{
+		auto animTime = animTimeComp->Data() +
+		std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+		std::chrono::duration<double>(dur * this->pace * this->velocity));
+		*animTimeComp = components::AnimationTime(animTime);
+	}
+	else
+	{
+		auto animTime = std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+		std::chrono::duration<double>(dur));
+		*animTimeComp = components::AnimationTime(animTime);
+	}
 	// Mark as a one-time-change so that the change is propagated to the GUI
 	_ecm.SetChanged(this->entity,
 		components::AnimationTime::typeId, ComponentState::OneTimeChange);

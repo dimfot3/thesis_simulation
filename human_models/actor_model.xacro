@@ -2,8 +2,10 @@
 <sdf version="1.6" xmlns:xacro="http://www.ros.org/wiki/xacro">
    <xacro:arg name="traj_path" default="test_motion.bin" />
    <xacro:arg name="velocity" default="2.0" />
-   <xacro:arg name="skin_file" default="walk.dae" />
-   <xacro:arg name="animation_file" default="walk.dae"/>
+   <xacro:arg name="skin_file" default="walk2.dae" />
+   <xacro:arg name="animation_file" default="walk2.dae"/>
+   <xacro:arg name="falling_t" default="-1"/>
+   <xacro:arg name="pace" default="1.0"/>
 	<actor name="actor_walking">
 		<pose>0 0 0 0 0 0</pose>
 		<skin>
@@ -14,10 +16,16 @@
 	          <traj>
 	          		<path>human_models/$(arg traj_path)</path>
 	          		<velocity>$(arg velocity)</velocity>
+	          		<pace>$(arg pace)</pace>
 	          </traj>
+	          <falling_t>$(arg falling_t)</falling_t>
 	  	</plugin>
 		<animation name="walk">
 			<filename>file:human_models/$(arg animation_file)</filename>
+			<interpolate_x>true</interpolate_x>
+		</animation>
+		<animation name="falling">
+			<filename>file:human_models/falling.dae</filename>
 			<interpolate_x>true</interpolate_x>
 		</animation>
 	</actor>
