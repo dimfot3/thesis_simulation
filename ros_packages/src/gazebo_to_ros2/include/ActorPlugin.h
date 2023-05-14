@@ -46,8 +46,8 @@ namespace command_actor
     flann::Index<flann::L2<float>> *ktree; // time kdtree for fast search
     float velocity, angular_velocity, pace;
     std::string actor_name;
-    float falling_time;
-    bool falling_bool;
+    float anim_t;
+    bool anim_bool;
   };
 }
 

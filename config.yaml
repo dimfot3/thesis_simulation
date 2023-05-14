@@ -6,7 +6,8 @@ human_1:
  velocity: 1.0
  pace: 1.0
  traj: "test_motion.bin"
- falling_t: 2.0
+ anim_t: 2.0
+ anim_f: 'showing.dae'
 lidar_1:
  x: 2.5
  y: -2.5

@@ -166,8 +166,8 @@ void CommandActor::Configure(const gz::sim::Entity &_entity,
 	node = std::make_shared<rclcpp::Node>("pose_publisher_" + actorComp->Data().Name());
 	this->actor_name = actorComp->Data().Name();
 	broadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(node);
-	falling_time = sdfClone->Get<float>("falling_t") > 0 ? sdfClone->Get<float>("falling_t") : std::numeric_limits<float>::max();
-	falling_bool = false;
+	anim_t = sdfClone->Get<float>("anim_t") > 0 ? sdfClone->Get<float>("anim_t") : std::numeric_limits<float>::max();
+	anim_bool = false;
 }
 
 
@@ -177,15 +177,15 @@ void CommandActor::PreUpdate(const gz::sim::UpdateInfo &_info,
 	// geting duration from last update and update time
 	float sec = (float) ((double) std::chrono::duration_cast<std::chrono::milliseconds>(
 		_info.simTime).count() / 1000.0);
-	float dur = !falling_bool ? sec - this->last_update : std::min(sec - falling_time, (float)3.0);
-	last_update = !falling_bool ? sec : last_update;
+	float dur = !anim_bool ? sec - this->last_update : std::min(sec - anim_t, (float)3.0);
+	last_update = !anim_bool ? sec : last_update;
 	float query_time = last_update - started_sec; 
-	if(sec >= falling_time & !falling_bool)
+	if(sec >= anim_t & !anim_bool)
 	{
-		falling_bool = true;
+		anim_bool = true;
 		this->velocity = 0;
 		auto animationNameComp = _ecm.Component<components::AnimationName>(this->entity);
-		*animationNameComp = components::AnimationName("falling");
+		*animationNameComp = components::AnimationName("anim");
 		_ecm.SetChanged(this->entity,
 		components::AnimationName::typeId, ComponentState::OneTimeChange);
 	}
@@ -222,7 +222,7 @@ void CommandActor::PreUpdate(const gz::sim::UpdateInfo &_info,
 		components::TrajectoryPose::typeId, ComponentState::OneTimeChange);
 	// Coordinate animation with trajectory
 	auto animTimeComp = _ecm.Component<components::AnimationTime>(this->entity);
-	if(!this->falling_bool)
+	if(!this->anim_bool)
 	{
 		auto animTime = animTimeComp->Data() +
 		std::chrono::duration_cast<std::chrono::steady_clock::duration>(

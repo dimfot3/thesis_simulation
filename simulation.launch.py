@@ -36,7 +36,8 @@ def generate_humans(humans):
     for human in humans.keys():
         subprocess.call(" ".join(["xacro", f"./human_models/actor_model.xacro", 
                         f"traj_path:={humans[human]['traj']}", f"velocity:={humans[human]['velocity']}",
-                         f"pace:={humans[human]['pace']}", f"falling_t:={humans[human]['falling_t']}", f"> ./human_models/{human}.sdf"]), shell=True) 
+                         f"pace:={humans[human]['pace']}", f"anim_t:={humans[human]['anim_t']}", f"anim_f:={humans[human]['anim_f']}",\
+                            f"> ./human_models/{human}.sdf"]), shell=True) 
 
 def generate_world(world_name, lidars, humans):
     print(lidars)
