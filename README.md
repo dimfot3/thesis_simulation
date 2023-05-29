@@ -8,7 +8,7 @@ This repository contains two indoor spaces: one simulating a bedroom and another
 To simplify the procedure, we created a single configuration file that enables for a smooth simulation start and setup. Furthermore, we have created custom plugins that allow the Gazebo simulation to be integrated with the Robotic Operating System (ROS2), allowing for real-time applications across many language frameworks. More information on how to start the simulation will be supplied in the following sections.
 
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="2d_schem/human_fall_ex1-1.png">
+    <source media="(prefers-color-scheme: dark)" srcset="2d_schem/human_fall_ex1-1.gif">
     <img alt="Small simulated bedroom with human falling" alt="drawing" width="49%" height="300">
   </picture>
 
