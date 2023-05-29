@@ -71,13 +71,13 @@ The main procedure of this file:
 - starting the simulation
 
 ## Links and Citations
-<a id="1">[6]</a> Thesis report https://drive.google.com/file/d/1bU3LGlbmP9Ni8-itYjfeBEJv9t3pE1vR/view?usp=sharing 
-<a id="2">[6]</a> Blender https://www.blender.org/
-<a id="3">[6]</a> MakeHuman software http://www.makehumancommunity.org/content/downloads.html
+<a id="1">[6]</a> Thesis report https://drive.google.com/file/d/1bU3LGlbmP9Ni8-itYjfeBEJv9t3pE1vR/view?usp=sharing <br>
+<a id="2">[6]</a> Blender https://www.blender.org/ <br>
+<a id="3">[6]</a> MakeHuman software http://www.makehumancommunity.org/content/downloads.html <br>
 <a id="4">[3]</a> Mixamo: https://www.mixamo.com/#/ <br>
 <a id="5">[1]</a>  Gazebo Garden: https://gazebosim.org/home <br>
 <a id="6">[2]</a> ROS2 humble: https://docs.ros.org/en/humble/index.html <br>
 <a id="7">[4]</a> Bedroom SDF: https://drive.google.com/file/d/1tx_Km4OHJxzaoKkMi6DDNt0QHsrwEFrI/view?usp=sharing <br>
 <a id="8">[5]</a> Workspace SDF: https://drive.google.com/file/d/1xzYyGJfddlzOgr16DMkZ6A1u_8xhAAf1/view?usp=sharing <br>
-<a id="9">[5]</a> xacro http://wiki.ros.org/xacro
+<a id="9">[5]</a> xacro http://wiki.ros.org/xacro <br>
 
