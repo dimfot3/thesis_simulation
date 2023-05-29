@@ -54,7 +54,8 @@ def generate_launch_description():
     generate_world(args['simulation_env'], args['lidars'], args['humans'])
     # set environment paths
     os.environ['AMENT_PREFIX_PATH'] +=f':{os.getcwd()}/ros_packages/install/gazebo_to_ros2'
-    os.environ['GZ_SIM_SYSTEM_PLUGIN_PATH'] =f':{os.getcwd()}/ros_packages/build/gazebo_to_ros2'
+    os.environ['GZ_SIM_SYSTEM_PLUGIN_PATH'] = f':{os.getcwd()}/ros_packages/build/gazebo_to_ros2'
+    os.environ['GZ_SIM_RESOURCE_PATH'] = f':{os.getcwd()}'
     lidar_names = [*args['lidars'].keys()]
     lidar_args = np.array([])
     for lidar in args['lidars'].keys():
