@@ -9,12 +9,12 @@ To simplify the procedure, we created a single configuration file that enables f
 
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="2d_schem/human_fall_ex1-1.gif">
-    <img alt="Small simulated bedroom with human falling" alt="drawing" width="49%" height="300">
+    <img alt="Small simulated bedroom with human falling" alt="drawing" width="49%" height="250">
   </picture>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="2d_schem/multihuman.png">
-  <img alt="Big simulated workspace with multiple humans walking" alt="drawing" width="49%" height="300">
+  <img alt="Big simulated workspace with multiple humans walking" alt="drawing" width="49%" height="250">
 </picture>
 
 
