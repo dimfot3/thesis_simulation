@@ -13,7 +13,6 @@ def parse_arguments():
         args_yaml = yaml.safe_load(file)
     args['simulation_env'] = args_yaml['simulation_env']
     args['rviz2'] = args_yaml['rviz2']
-    args['static_lidar'] = args_yaml['static_lidar']
     humans = [human_name for human_name in list(args_yaml.keys()) if human_name[:5] == 'human']
     lidars = [lidar_name for lidar_name in list(args_yaml.keys()) if lidar_name[:5] == 'lidar']
     args['humans'] = {}
@@ -84,18 +83,10 @@ def generate_launch_description():
     cmd=['rviz2'],
     output='screen')
 
-    # init lidar positioning
-    ld_pos_node = ExecuteProcess(
-    cmd=['python3', 'lidar_positioning.py'],
-    output='screen')
-
     # create and return launcher
     ld = LaunchDescription()
     ld.add_action(lidar_node)
-    if(args['static_lidar']):
-        ld.add_action(lidar_tf_node)
-    else:
-        ld.add_action(ld_pos_node)
+    ld.add_action(lidar_tf_node)
     ld.add_action(gazebo_node)
     if rviz2_arg: ld.add_action(rviz2_node)
     return ld

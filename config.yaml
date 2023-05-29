@@ -1,7 +1,6 @@
 ---
 simulation_env: "bedroom"
 rviz2: true
-static_lidar: true
 human_1: 
  velocity: 1.0
  pace: 1.0
