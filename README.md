@@ -7,6 +7,17 @@ This repository contains two indoor spaces: one simulating a bedroom and another
 
 To simplify the procedure, we created a single configuration file that enables for a smooth simulation start and setup. Furthermore, we have created custom plugins that allow the Gazebo simulation to be integrated with the Robotic Operating System (ROS2), allowing for real-time applications across many language frameworks. More information on how to start the simulation will be supplied in the following sections.
 
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/dimfot3/Thesis_Simulation/blob/main/2d_schem/human_fall_ex1-1.png">
+    <img alt="Small simulated bedroom with human falling" alt="drawing" width="49%" height="300">
+  </picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/dimfot3/Thesis_Simulation/blob/main/2d_schem/multihuman.png">
+  <img alt="Big simulated workspace with multiple humans walking" alt="drawing" width="49%" height="300">
+</picture>
+
+
 ## Software Requirements
 For the implementation of simulations we used the latest (2022-2023) versions of Gazebo Simulation and ROS2. The project were created and tested using linux Ubuntu 22.04 (Jammy Jellyfish), however it is higly possible that will work in other platfomrs with small modifications.
 Required Software:
