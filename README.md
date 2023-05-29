@@ -80,6 +80,11 @@ The main procedure of this file:
 - starting a republisher of LiDARs' information from Gazebo topics to ROS2 topics
 - starting the simulation
 
+## Human Walking Trajectories and Animations
+To create custom trajectories, you can utilize the ``HumanMotionCreator.py`` script. This script allows you to generate smooth and realistic trajectories within a specific area. It offers functions for plotting and saving the trajectory in a binary format.To use the script, make sure to save it in the "human_models" folder. If you want to use a custom trajectory, specify the file name of the custom binary file in the ``traj`` parameter of the human dictionary in config.yaml. Additionally, a custom plugin has been developed that publishes the human's position in the ROS2 transform topic ``/tf``. This plugin is responsible for moving the human along the custom trajectory specified in ``traj`` and performing the animation ``anim_f`` within the predefined time ``anim_t``.
+
+In this repository the default animation is walking (``walk2.dae``) and happens until ``anim_t`` if ``anim_t>=0`` else happens until we close the simulation. Apart from that there are animations where human is standing (``standing.dae``), showing down (``showing.dae``), standing with two hands up (``handsup2.dae``) and falling down (``falling.dae``). They can be found in ``human_models`` folder and used in humans dictionary parameter ``anim_f`` to be performed at ``anim_t``.
+
 ## Links and Citations
 <a id="1">[1]</a> Thesis report: https://drive.google.com/file/d/1bU3LGlbmP9Ni8-itYjfeBEJv9t3pE1vR/view?usp=sharing <br>
 <a id="2">[2]</a> Blender software: https://www.blender.org/ <br>
