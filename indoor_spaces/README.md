@@ -1,2 +1,2 @@
-bedroom: https://drive.google.com/file/d/1nZmj9VFXT-t1mph964EkjC4iVMAZvM4p/view?usp=share_link
-workspaceA: https://drive.google.com/file/d/1ueo_L3yf_iMCYsmOvjhvxVST1EqK55oZ/view?usp=share_link
+bedroom: https://drive.google.com/file/d/1tx_Km4OHJxzaoKkMi6DDNt0QHsrwEFrI/view?usp=sharing
+workspaceA: https://drive.google.com/file/d/1xzYyGJfddlzOgr16DMkZ6A1u_8xhAAf1/view?usp=sharing
