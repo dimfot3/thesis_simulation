@@ -59,3 +59,7 @@ Here are the main steps to try this repository:
      ```
     To explain more in first line we set the name of environment we wish to be simulated. We provide the ``bedroom`` and the ``workspaceA``. In second line we set if we want an rviz visualization where we can see the LiDAR and human entitties. The ``static_lidar`` is for debugging purposes, it should be kept ``true``. In order to define a human in the simulation create a set ``human_k``. Make sure that name follows this notation and the humans are ordered from 1 to n. You can set explicitely the velocity of human, its pace (how fast his legs are moving) and the trajectory file. You can see more about trajectory below. You can also set a animation file ``anim_f`` to perform except from walking, like falling. The time which the animation will performned is setted in  ``anim_t`` and if we dont want any animation we can set time -1.
     In same manner we can set n LiDARs. In ``x,y,z,rx,ry,rz`` we set its position and orientation in space. We can also explicitely change the number of channels and the rotation rate of the LiDARs.
+    
+## Links and Citations
+Bedroom SDF: https://drive.google.com/file/d/1tx_Km4OHJxzaoKkMi6DDNt0QHsrwEFrI/view?usp=sharing
+Workspace SDF: https://drive.google.com/file/d/1xzYyGJfddlzOgr16DMkZ6A1u_8xhAAf1/view?usp=sharing
