@@ -1,5 +1,5 @@
 ---
-simulation_env: "bedroom"
+simulation_env: "workspaceA"
 rviz2: true
 static_lidar: true
 human_1: 
@@ -7,7 +7,7 @@ human_1:
  pace: 1.0
  traj: "test_motion.bin"
  anim_t: 2.0
- anim_f: 'showing.dae'
+ anim_f: 'falling.dae'
 lidar_1:
  x: 2.5
  y: -2.5
