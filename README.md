@@ -23,13 +23,14 @@ For the implementation of simulations we used the latest (2022-2023) versions of
 Required Software:
 - Ubuntu 22.04 (Jammy Jellyfish)
 - Gazebo Garden [[5]](#5)
-- Robotic Operation System (ROS2) Humble Hawksbill [[6]](#6)
+- Robotic Operation System (ROS2) Humble Hawksbill [[6]](#6) with XACRO and Rviz2
 - python 3.10.6
 - Python packages:
   - matplotlib==3.5.1
   - numpy==1.21.5
   - PyYAML==6.0
   - scipy==1.8.0
+- FlANN [[10]](#10)
 
 ## Seting up procedure
 Here are the main steps to try this repository:
@@ -85,6 +86,13 @@ To create custom trajectories, you can utilize the ``HumanMotionCreator.py`` scr
 
 In this repository the default animation is walking (``walk2.dae``) and happens until ``anim_t`` if ``anim_t>=0`` else happens until we close the simulation. Apart from that there are animations where human is standing (``standing.dae``), showing down (``showing.dae``), standing with two hands up (``handsup2.dae``) and falling down (``falling.dae``). They can be found in ``human_models`` folder and used in humans dictionary parameter ``anim_f`` to be performed at ``anim_t``.
 
+## Docker (Experimental)
+If you're planning to build a ROS2-based simulation that can be deployed on various Linux systems, a practical approach would be to use a Docker image built on ROS2. Docker allows to package simulation with all its dependencies, thereby ensuring it can run uniformly across different Linux distributions. Before you begin, you'll need to install Docker on your system. Docker is a platform that enables you to automate the deployment, scaling, and management of applications within containers. In addition, you'll also need to install the NVIDIA Container Toolkit. This toolkit enables the NVIDIA graphics processing unit (GPU) to be accessible in a Docker container, allowing it to leverage the GPU's capabilities for graphics and display. This is particularly useful when running simulations that require significant graphical processing power. <br>
+
+Then in Ubuntu run in root folder : <br>
+In order to build an image (This takes time): ```sudo docker  build -t test .``` <br>
+In order to start a container: ```sudo docker run -it  -e DISPLAY=:1  -v /tmp/.X11-unix:/tmp/.X11-unix --gpus all  test```  <br>
+
 ## Links and Citations
 <a id="1">[1]</a> Thesis report: https://drive.google.com/file/d/1bU3LGlbmP9Ni8-itYjfeBEJv9t3pE1vR/view?usp=sharing <br>
 <a id="2">[2]</a> Blender software: https://www.blender.org/ <br>
@@ -95,4 +103,5 @@ In this repository the default animation is walking (``walk2.dae``) and happens 
 <a id="7">[7]</a> Bedroom SDF: https://drive.google.com/file/d/1tx_Km4OHJxzaoKkMi6DDNt0QHsrwEFrI/view?usp=sharing <br>
 <a id="8">[8]</a> Workspace SDF: https://drive.google.com/file/d/1xzYyGJfddlzOgr16DMkZ6A1u_8xhAAf1/view?usp=sharing <br>
 <a id="9">[9]</a> xacro: http://wiki.ros.org/xacro <br>
+<a id="10">[10]</a> FLANN https://github.com/mariusmuja/flann.git /opt/flann
 
