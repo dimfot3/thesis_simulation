@@ -92,6 +92,7 @@ In order the simulation to be deployed on various Linux systems, a practical app
 Then in Ubuntu run in root folder of simulation: <br>
 In order to build an image (This takes time): ```sudo docker  build -t test .``` <br>
 In order to start a container: ```sudo docker run -it  -e DISPLAY=:1  -v /tmp/.X11-unix:/tmp/.X11-unix --gpus all  test```  <br>
+After that you will have access in the cmd to the root of linux based system that have all the depedencies installed. 
 
 ## Links and Citations
 <a id="1">[1]</a> Thesis report: https://drive.google.com/file/d/1bU3LGlbmP9Ni8-itYjfeBEJv9t3pE1vR/view?usp=sharing <br>
