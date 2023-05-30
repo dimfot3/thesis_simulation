@@ -1,4 +1,4 @@
-# Thesis_Simulation
+# thesis-simulation
 
 ## Overview
 This repository is part of my Thesis [[1]](#1) at Aristotle University of Thessaloniki's Department of Electrical and Computer Engineering. My Thesis focused on digital indoor reconstruction and human detection utilizing LiDAR technology. We created some simulations in this repository using Gazebo Simulator, which is extensively used in the scientific community for robotic applications to test the perfomance of our applications under different realist circumstances.
