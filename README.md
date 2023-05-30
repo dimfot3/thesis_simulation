@@ -30,7 +30,7 @@ Required Software:
   - numpy==1.21.5
   - PyYAML==6.0
   - scipy==1.8.0
-- FlANN [[10]](#10)
+-  Fast Library for Approximate Nearest Neighbors (FLANN) [[10]](#10)
 
 ## Seting up procedure
 Here are the main steps to try this repository:
