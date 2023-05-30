@@ -104,5 +104,5 @@ After that you will have access in the cmd to the root of linux based system tha
 <a id="7">[7]</a> Bedroom SDF: https://drive.google.com/file/d/1tx_Km4OHJxzaoKkMi6DDNt0QHsrwEFrI/view?usp=sharing <br>
 <a id="8">[8]</a> Workspace SDF: https://drive.google.com/file/d/1xzYyGJfddlzOgr16DMkZ6A1u_8xhAAf1/view?usp=sharing <br>
 <a id="9">[9]</a> xacro: http://wiki.ros.org/xacro <br>
-<a id="10">[10]</a> FLANN https://github.com/mariusmuja/flann.git /opt/flann
+<a id="10">[10]</a> FLANN https://github.com/mariusmuja/flann.git
 
